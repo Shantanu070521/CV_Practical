@@ -1,0 +1,53 @@
+# Import necessary libraries
+import cv2
+import matplotlib.pyplot as plt
+from skimage.feature import hog
+from skimage import exposure
+IMAGE_PATH_1 = "/content/Practicals/DuoDOgo.jpeg"
+IMAGE_PATH_2 = "/content/Practicals/lion.jpg" 
+IMAGE_PATH_3 = "/content/Practicals/doreNob.jpg" 
+IMAGE_PATH_4 = "/content/Practicals/sizuka.jpg" 
+image_paths = [IMAGE_PATH_1, IMAGE_PATH_2, IMAGE_PATH_3, IMAGE_PATH_4]
+TARGET_SIZE = (128, 128)
+# Function to perform HOG extraction
+def get_hog_features(path, size):
+    """Reads, resizes, converts to grayscale, and extracts HOG features."""
+    img = cv2.imread(path)
+    if img is None:
+        raise FileNotFoundError(f"Error: Could not load image at {path}. Check your file names and paths.")
+    # Resize image to a consistent size
+    img_resized = cv2.resize(img, size)
+    # Convert for HOG processing (grayscale) and display (RGB)
+    img_rgb = cv2.cvtColor(img_resized, cv2.COLOR_BGR2RGB)
+    gray = cv2.cvtColor(img_resized, cv2.COLOR_BGR2GRAY)
+
+    # Calculate HOG features and visualization
+    features, hog_image = hog(
+        gray,
+        orientations=9,
+        pixels_per_cell=(8, 8),
+        cells_per_block=(2, 2),
+        block_norm='L2-Hys',
+        visualize=True
+    )
+    # Rescale HOG visualization for better display contrast
+    hog_image_rescaled = exposure.rescale_intensity(hog_image, in_range=(0, 10))
+    return img_rgb, hog_image_rescaled, features
+plt.figure(figsize=(14, 14))
+for i, path in enumerate(image_paths):
+    img_rgb, hog_vis, feat_vec = get_hog_features(path, TARGET_SIZE)
+    # Print the resulting vector length
+    print(f"HOG feature vector length for Image {i+1} ('{path.split('/')[-1]}'): {len(feat_vec)}")
+    # Plotting Original Resized Image (using a 4x2 grid)
+    plt.subplot(4, 2, i*2 + 1)
+    plt.imshow(img_rgb)
+    plt.title(f"Original: {path.split('/')[-1]} (Resized)")
+    plt.axis("off")
+    # Plotting HOG Visualization (using a 4x2 grid)
+    plt.subplot(4, 2, i*2 + 2)
+    plt.imshow(hog_vis, cmap='gray')
+    plt.title(f"HOG Visualization")
+    plt.axis("off")
+plt.tight_layout()
+plt.show()
+
