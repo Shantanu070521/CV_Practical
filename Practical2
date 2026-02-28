@@ -1,0 +1,36 @@
+Code:
+clc;
+clear;
+close all;
+
+% Read image
+img = imread('image_1.jpg');   % replace with your image if needed
+img = im2double(img);
+
+% Show original image
+figure;
+imshow(img, []);
+title('Original Image');
+
+% Sigma values
+sigma1 = 0.5;
+sigma2 = 2.0;
+
+% Gaussian filters
+h1 = fspecial('gaussian', [7 7], sigma1);
+h2 = fspecial('gaussian', [7 7], sigma2);
+
+% Apply filters
+filtered_img1 = imfilter(img, h1, 'replicate');
+filtered_img2 = imfilter(img, h2, 'replicate');
+
+% Show filtered image with sigma = 0.5
+figure;
+imshow(filtered_img1, []);
+title('Gaussian Filtered Image (Sigma = 0.5)');
+
+% Show filtered image with sigma = 2.0
+figure;
+imshow(filtered_img2, []);
+title('Gaussian Filtered Image (Sigma = 2.0)');
+
