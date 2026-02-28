@@ -1,0 +1,39 @@
+Code:
+% Gray Level Transformations for Image Enhancement
+clc; clear; close all;
+
+% 1. Load a built-in grayscale image
+img = imread('cameraman.tif');
+r = double(img); % Convert to double for calculations
+
+% 2. Image Negative
+% Formula: s = (L-1) - r
+img_negative = 255 - img; %
+
+% 3. Log Transformation
+% Formula: s = c * log(1 + r)
+% Compresses high intensity and expands low intensity
+c = 1; 
+img_log = c * log(1 + r);
+img_log = uint8(255 * mat2gray(img_log)); % Normalize to [0, 255]
+
+% 4. Power-Law (Gamma) Transformation
+% Formula: s = c * r^gamma
+% gamma < 1 brightens image; gamma > 1 darkens image
+gamma_val = 0.6; % Example: brighten
+img_gamma = c * (r .^ gamma_val);
+img_gamma = uint8(255 * mat2gray(img_gamma));
+
+% 5. Contrast Stretching
+% Maps input intensities [low, high] to full range [0, 255]
+img_contrast = imadjust(img, stretchlim(img), []); %
+
+% Display Results
+figure('Name', 'Gray Level Transformations');
+subplot(2,3,1), imshow(img), title('Original');
+subplot(2,3,2), imshow(img_negative), title('Negative');
+subplot(2,3,3), imshow(img_log), title('Log Transformation');
+subplot(2,3,4), imshow(img_gamma), title(['Gamma (\gamma=' num2str(gamma_val) ')']);
+subplot(2,3,5), imshow(img_contrast), title('Contrast Stretching');
+
+
