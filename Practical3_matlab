@@ -1,0 +1,52 @@
+% Clear workspace
+clear;
+clc;
+close all;
+
+% Image paths
+IMAGE_PATH_1 = "/content/Practicals/DuoDOgo.jpeg";
+IMAGE_PATH_2 = "/content/Practicals/lion.jpg";
+IMAGE_PATH_3 = "/content/Practicals/doreNob.jpg";
+IMAGE_PATH_4 = "/content/Practicals/sizuka.jpg";
+
+image_paths = [IMAGE_PATH_1, IMAGE_PATH_2, IMAGE_PATH_3, IMAGE_PATH_4];
+
+% Target image size
+TARGET_SIZE = [128 128];
+
+% Create figure
+figure('Position', [100 100 900 900]);
+
+for i = 1:length(image_paths)
+
+    % Read image
+    img = imread(image_paths(i));
+    
+    % Resize image
+    img_resized = imresize(img, TARGET_SIZE);
+    
+    % Convert to grayscale
+    gray = rgb2gray(img_resized);
+    
+    % Extract HOG features and visualization
+    [features, hog_vis] = extractHOGFeatures(gray, ...
+        'CellSize', [8 8], ...
+        'BlockSize', [2 2], ...
+        'NumBins', 9);
+    
+    % Display feature vector length
+    fprintf("HOG feature vector length for Image %d ('%s'): %d\n", ...
+        i, image_paths(i), length(features));
+    
+    % Plot original image
+    subplot(4, 2, (i-1)*2 + 1);
+    imshow(img_resized);
+    title("Original Image (Resized)");
+    
+    % Plot HOG visualization
+    subplot(4, 2, (i-1)*2 + 2);
+    imshow(hog_vis, []);
+    title("HOG Visualization");
+end
+
+
